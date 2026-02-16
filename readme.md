@@ -1,4 +1,4 @@
-# Projecte DI01 – Disseny d’Interfícies  
+# Projecte DI – Disseny d’Interfícies (DI01 → DI04)
 Aplicació: **ytdlgui (Java Swing)**  
 Alumne: **Jordi Gelabert**  
 Cicle Formatiu: **DAM – 2n curs**  
@@ -44,6 +44,18 @@ Inclou:
 - Events i listener MediaPollingListener
 - Execució immediata després del login
 
+### **ytdlgui - tasca 4.1**
+Implementació de millores d’interacció i feedback d’usuari.
+
+Inclou:
+- Validació d’URL de YouTube abans de descarregar
+- Ús de SwingWorker per simular descàrrega asíncrona
+- Integració de JProgressBar indeterminada
+- Estat dinàmic mitjançant JLabel (Ready / Downloading / Completed)
+- Bloqueig temporal del botó Download durant el procés
+- Simulació de procés amb feedback visual i logs actualitzats
+
+
 ---
 
 ## ▶️ Com executar el projecte
@@ -72,7 +84,28 @@ L’aplicació arrencarà amb el formulari de login i posteriorment carregarà l
 
 ## ✔️ Estat de la pràctica
 
-Totes les parts de la tasca **1.1, 1.2, 3.1, 3.2 i 3.3** estan completades i integrades.  
-La funcionalitat de polling s’ha encapsulat en una llibreria Maven independent (`mediapolling-component`) i s’ha integrat correctament dins l’aplicació principal mitjançant el Designer de NetBeans.
+Totes les parts de la tasca **1.1, 1.2, 3.1, 3.2, 3.3 i 4.1** estan completades i integrades.
+
+L’aplicació actual inclou:
+- Sistema de login
+- Integració del MediaPollingComponent
+- Simulació de descàrrega multimèdia
+- Validació d’entrada d’usuari
+- Execució asíncrona amb SwingWorker
+- Feedback visual mitjançant JProgressBar i estat dinàmic
 
 Cada entrega està reflectida en commits independents dins del repositori.
+
+---
+
+## 📌 Evolució del projecte
+
+Aquest repositori mostra l’evolució progressiva de l’aplicació ytdlgui al llarg de les diferents entregues del mòdul DI, incorporant:
+
+- Creació d’interfícies amb Swing
+- Navegació amb CardLayout
+- Desenvolupament de components personalitzats (JavaBean)
+- Integració Maven
+- Programació asíncrona amb SwingWorker
+- Millora de l’experiència d’usuari amb feedback visual
+
