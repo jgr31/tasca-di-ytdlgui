@@ -2,6 +2,9 @@ package gelabert.ytdlgui;
 
 import java.time.LocalDateTime;
 
+/**
+ * Local representation of a media file shown in the media library.
+ */
 public class MediaFile {
 
     private String name;           // Nom del fitxer (p. ex. "video.mp4")

@@ -1,11 +1,19 @@
 package gelabert.ytdlgui;
 
+/**
+ * Simple data model used to represent a media category loaded from JSON.
+ */
 public class Category {
     private int id;
     private String name;
 
     public Category() {} // Jackson needs empty constructor
 
+    /**
+     * Returns the identifier of the category.
+     *
+     * @return category id
+     */
     public int getId() {
         return id;
     }

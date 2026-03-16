@@ -15,6 +15,9 @@ import java.nio.file.Files;
  *
  * @author jordi.gelabert
  */
+/**
+ * Screen used to show the media library loaded from the backend or local state.
+ */
 public class MediaLibraryPanel extends javax.swing.JPanel {
 
     private List<MediaFile> allFiles = new ArrayList<>();

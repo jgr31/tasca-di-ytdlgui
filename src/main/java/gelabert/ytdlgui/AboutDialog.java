@@ -5,8 +5,10 @@
 package gelabert.ytdlgui;
 
 /**
+ * Modal dialog that displays basic information about the application,
+ * its author and the resources used during development.
  *
- * @author JGR
+ * @author Jordi Gelabert
  */
 public class AboutDialog extends javax.swing.JDialog {
     
@@ -15,7 +17,13 @@ public class AboutDialog extends javax.swing.JDialog {
     /**
      * Creates new form AboutDialog
      */
-    public AboutDialog(java.awt.Frame parent, boolean modal) {
+/**
+ * Creates the about dialog centered relative to its parent window.
+ *
+ * @param parent parent frame that owns this dialog
+ * @param modal whether the dialog blocks interaction with the parent frame
+ */
+public AboutDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
@@ -85,6 +93,11 @@ public class AboutDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Closes the dialog when the user presses the close button.
+     *
+     * @param evt action event fired by the Swing button
+     */
     private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
         // TODO add your handling code here:
         dispose();

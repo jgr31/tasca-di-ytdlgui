@@ -15,6 +15,9 @@ import javax.swing.event.DocumentListener;
  *
  * @author JGR
  */
+/**
+ * Main downloader panel where the user pastes a URL and starts the download flow.
+ */
 public class MainPanel extends javax.swing.JPanel {
 
     private static final Pattern YT_URL = Pattern.compile(
@@ -24,6 +27,9 @@ public class MainPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form MainPanel
+     */
+    /**
+     * Creates the main downloader panel and configures the initial interaction rules.
      */
 public MainPanel() {
     initComponents();

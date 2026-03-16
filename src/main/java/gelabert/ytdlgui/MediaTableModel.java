@@ -4,6 +4,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * Swing table model used to render media items inside the library table.
+ */
 public class MediaTableModel extends AbstractTableModel {
 
     private final String[] cols = {"Nombre", "Tamaño (MB)", "MIME", "Fecha"};

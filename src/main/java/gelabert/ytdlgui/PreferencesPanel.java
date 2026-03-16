@@ -8,6 +8,9 @@ package gelabert.ytdlgui;
  *
  * @author JGR
  */
+/**
+ * Preferences screen used to edit user options inside the application.
+ */
 public class PreferencesPanel extends javax.swing.JPanel {
 
      private MainFrame mainFrame;

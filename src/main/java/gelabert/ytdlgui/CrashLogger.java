@@ -10,6 +10,9 @@ public final class CrashLogger {
 
     private CrashLogger() {}
 
+    /**
+     * Installs the global uncaught-exception handler used by the application.
+     */
     public static void install() {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             try {

@@ -5,8 +5,10 @@
 package gelabert.ytdlgui;
 
 /**
+ * Main application window.
+ * Coordinates authentication, navigation between panels and polling startup.
  *
- * @author JGR
+ * @author Jordi Gelabert
  */
 public class MainFrame extends javax.swing.JFrame {
     
@@ -26,6 +28,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form MainFrame
+     */
+    /**
+     * Builds the main frame, initializes all panels and configures the initial UI state.
      */
 public MainFrame() {
     initComponents();
@@ -247,14 +252,24 @@ public MainFrame() {
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
     
-        public void showCard(String name) {
+/**
+ * Shows one of the cards managed by the central {@code CardLayout}.
+ *
+ * @param name logical name of the panel to display
+ */
+    public void showCard(String name) {
         java.awt.CardLayout cl = (java.awt.CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, name);
     }
         
 
     // 🔹 Cridarem això per activar/desactivar menús
-    public void setLoggedIn(boolean loggedIn) {
+/**
+ * Enables or disables the menus that require an authenticated session.
+ *
+ * @param loggedIn {@code true} if the user is authenticated; {@code false} otherwise
+ */
+public void setLoggedIn(boolean loggedIn) {
         menuViewDownloader.setEnabled( loggedIn );
         menuViewLibrary.setEnabled( loggedIn );
         menuPreferences.setEnabled( loggedIn );
@@ -262,6 +277,11 @@ public MainFrame() {
     }
 
     // 🔹 Quan el login tingui èxit, guardarem el token aquí
+    /**
+     * Stores the authentication token, starts polling and opens the main downloader view.
+     *
+     * @param token JWT token returned by the backend after a successful login
+     */
 public void onLoginSuccess(String token) {
     // guardar el token a MainFrame
     this.authToken = token;
@@ -277,7 +297,12 @@ public void onLoginSuccess(String token) {
 
 
 
-    public String getAuthToken() {
+/**
+ * Returns the current authentication token for the active session.
+ *
+ * @return authentication token, or {@code null} if no user is logged in
+ */
+public String getAuthToken() {
         return authToken;
     }
 

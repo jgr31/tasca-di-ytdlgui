@@ -23,6 +23,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * HTTP client wrapper for the DI Media NET backend.
+ * Provides operations for authentication, media queries and file transfer.
+ */
 public class ApiClient {
 
     private final HttpClient client;
@@ -30,7 +34,12 @@ public class ApiClient {
     private final String baseUrl;
     private final String defaultBlobContainer = "dimedianetblobs";
 
-    public ApiClient(String baseUrl) {
+/**
+ * Creates a client configured for the given backend base URL.
+ *
+ * @param baseUrl root URL of the remote API
+ */
+public ApiClient(String baseUrl) {
         this.baseUrl = baseUrl;
         this.client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
     }
@@ -44,7 +53,15 @@ public class ApiClient {
         return b;
     }
 
-    public String login(String email, String password) throws Exception {
+/**
+ * Authenticates a user and returns the token produced by the API.
+ *
+ * @param email user email address
+ * @param password plain text password entered in the login form
+ * @return authentication token returned by the backend
+ * @throws Exception if the request fails or the response is not successful
+ */
+public String login(String email, String password) throws Exception {
         Map<String, Object> body = Map.of("email", email, "password", password);
         String json = mapper.writeValueAsString(body);
         HttpRequest req = requestBuilder("/api/Auth/login", null)
@@ -72,7 +89,14 @@ public class ApiClient {
         }
     }
 
-    public Usuari getMe(String jwt) throws Exception {
+/**
+ * Retrieves the profile of the authenticated user.
+ *
+ * @param jwt bearer token used to authorize the request
+ * @return user profile returned by the API
+ * @throws Exception if the request fails
+ */
+public Usuari getMe(String jwt) throws Exception {
         HttpRequest req = requestBuilder("/api/users/me", jwt).GET().build();
         HttpResponse<String> r = client.send(req, HttpResponse.BodyHandlers.ofString());
         if (r.statusCode() / 100 == 2) {
@@ -81,7 +105,15 @@ public class ApiClient {
         throw new IOException("getMe failed: " + r.statusCode() + " " + r.body());
     }
 
-    public String getNickName(int id, String jwt) throws Exception {
+/**
+ * Retrieves the nickname associated with a user identifier.
+ *
+ * @param id user identifier
+ * @param jwt bearer token used to authorize the request
+ * @return nickname returned by the API
+ * @throws Exception if the request fails
+ */
+public String getNickName(int id, String jwt) throws Exception {
         HttpRequest req = requestBuilder("/api/users/" + id + "/nickname", jwt).GET().build();
         HttpResponse<String> r = client.send(req, HttpResponse.BodyHandlers.ofString());
         if (r.statusCode() / 100 == 2) {
@@ -108,7 +140,14 @@ public class ApiClient {
         throw new IOException("getNickName failed: " + r.statusCode());
     }
 
-    public List<Media> getAllMedia(String jwt) throws Exception {
+/**
+ * Loads every media item visible to the authenticated user.
+ *
+ * @param jwt bearer token used to authorize the request
+ * @return list of media entries
+ * @throws Exception if the request fails
+ */
+public List<Media> getAllMedia(String jwt) throws Exception {
         HttpRequest req = requestBuilder("/api/files/all", jwt).GET().build();
         HttpResponse<String> r = client.send(req, HttpResponse.BodyHandlers.ofString());
         if (r.statusCode() / 100 == 2) {
@@ -149,7 +188,15 @@ public class ApiClient {
     }
 
     // Download blob data and write to destFile
-    public void download(int id, File destFile, String jwt) throws Exception {
+/**
+ * Downloads a media file identified by its backend id.
+ *
+ * @param id media identifier in the backend
+ * @param destFile output file where the binary content will be written
+ * @param jwt bearer token used to authorize the request
+ * @throws Exception if the request fails or the media does not exist
+ */
+public void download(int id, File destFile, String jwt) throws Exception {
         String path = "/api/files/" + id + "?container=" + URLEncoder.encode(defaultBlobContainer, "UTF-8");
         HttpRequest req = requestBuilder(path, jwt).GET().build();
         HttpResponse<InputStream> r = client.send(req, HttpResponse.BodyHandlers.ofInputStream());
@@ -167,7 +214,16 @@ public class ApiClient {
     }
 
     // Upload file as multipart/form-data (field names: file, downloadedFromUrl, container)
-    public String uploadFileMultipart(File file, String downloadedFromUrl, String jwt) throws Exception {
+/**
+ * Uploads a local file to the backend using multipart/form-data.
+ *
+ * @param file file to upload
+ * @param downloadedFromUrl original source URL associated with the media
+ * @param jwt bearer token used to authorize the request
+ * @return raw backend response body
+ * @throws Exception if the upload fails
+ */
+public String uploadFileMultipart(File file, String downloadedFromUrl, String jwt) throws Exception {
         String boundary = "----JavaClientBoundary" + System.currentTimeMillis();
         Map<String, String> fields = new HashMap<>();
         if (downloadedFromUrl != null) {
@@ -215,7 +271,15 @@ public class ApiClient {
         return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
     }
 
-    public List<Media> getMediaAddedSince(OffsetDateTime from, String jwt) throws Exception {
+/**
+ * Retrieves media created after the provided timestamp.
+ *
+ * @param from lower bound used to filter recently added media
+ * @param jwt bearer token used to authorize the request
+ * @return list of media entries newer than {@code from}
+ * @throws Exception if the request fails
+ */
+public List<Media> getMediaAddedSince(OffsetDateTime from, String jwt) throws Exception {
         if (from == null) {
             throw new IllegalArgumentException("from is required");
         }

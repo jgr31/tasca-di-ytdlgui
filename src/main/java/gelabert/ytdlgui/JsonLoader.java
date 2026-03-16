@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Utility class that loads users and categories from bundled JSON resources.
+ */
 public class JsonLoader {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

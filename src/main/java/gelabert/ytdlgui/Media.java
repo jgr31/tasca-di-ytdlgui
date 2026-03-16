@@ -3,6 +3,9 @@ package gelabert.ytdlgui;
 // Created by Github Copilot
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Data transfer object that represents one media entry returned by the backend API.
+ */
 public class Media {
     @JsonProperty("id")
     public int id;

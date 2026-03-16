@@ -6,6 +6,9 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.regex.Pattern;
 
+/**
+ * Login screen responsible for collecting credentials and starting authentication.
+ */
 public class LoginPanel extends JPanel {
 
     private final MainFrame mainFrame;

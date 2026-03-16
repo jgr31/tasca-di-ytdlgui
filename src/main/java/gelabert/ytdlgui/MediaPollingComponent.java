@@ -10,6 +10,10 @@ import java.util.List;
  * JavaBean sense visuals (només un JLabel amb una icona/text)
  * que encapsula l'ApiClient i fa polling periòdic a la DI Media NET.
  */
+/**
+ * Reusable Swing component that wraps {@link ApiClient} and performs periodic polling
+ * for newly added media in the DI Media NET backend.
+ */
 public class MediaPollingComponent extends JPanel {
 
     // --- Propietats del component ---
@@ -27,6 +31,9 @@ public class MediaPollingComponent extends JPanel {
     // listeners personalitzats
     private final List<MediaPollingListener> listeners = new ArrayList<>();
 
+    /**
+     * Creates the polling component, initializes its label and prepares the Swing timer.
+     */
     public MediaPollingComponent() {
         // Layout i "icona"
         setLayout(new BorderLayout());
@@ -115,6 +122,14 @@ public class MediaPollingComponent extends JPanel {
     //   WRAPPERS ApiClient
     // =====================
 
+    /**
+     * Authenticates the user through the wrapped API client and starts polling immediately.
+     *
+     * @param email user email address
+     * @param password plain text password entered by the user
+     * @return backend authentication token
+     * @throws Exception if authentication fails
+     */
 public String login(String email, String password) throws Exception {
     String t = apiClient.login(email, password);
 
@@ -203,12 +218,22 @@ public String login(String email, String password) throws Exception {
     //   EVENTS
     // =====================
 
+    /**
+     * Registers a listener that will be notified when new media is discovered.
+     *
+     * @param l listener to register
+     */
     public void addMediaPollingListener(MediaPollingListener l) {
         if (l != null && !listeners.contains(l)) {
             listeners.add(l);
         }
     }
 
+    /**
+     * Removes a previously registered polling listener.
+     *
+     * @param l listener to remove
+     */
     public void removeMediaPollingListener(MediaPollingListener l) {
         listeners.remove(l);
     }
