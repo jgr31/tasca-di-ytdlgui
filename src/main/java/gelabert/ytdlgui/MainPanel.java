@@ -4,22 +4,166 @@
  */
 package gelabert.ytdlgui;
 
+import java.awt.Cursor;
+import java.util.regex.Pattern;
+import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 /**
  *
  * @author JGR
  */
 public class MainPanel extends javax.swing.JPanel {
 
+    private static final Pattern YT_URL = Pattern.compile(
+        "^(https?://)?(www\\.)?(youtube\\.com/watch\\?v=|youtu\\.be/).+",
+        Pattern.CASE_INSENSITIVE
+);
+
     /**
      * Creates new form MainPanel
      */
 public MainPanel() {
     initComponents();
+    initUX();
 
+}
 
-    mediaPollingComponent1.addMediaPollingListener(evt -> {
-        txtLog.append(evt.toString() + "\n");
+private void initUX() {
+    progressDownload.setVisible(false);
+    rbMp3.setSelected(true);
+    btnDownload.setEnabled(false);
+    lblStatus.setText("Ready");
+
+    txtUrl.setToolTipText("Paste a YouTube URL (youtube.com/watch?v=... or youtu.be/...)");
+    btnDownload.setToolTipText("Start download");
+    chkAudioOnly.setToolTipText("Force audio-only mode (MP3)");
+    chkOpenPlayer.setToolTipText("Open player after download");
+
+    txtUrl.getDocument().addDocumentListener(new DocumentListener() {
+        @Override public void insertUpdate(DocumentEvent e) { updateDownloadState(); }
+        @Override public void removeUpdate(DocumentEvent e) { updateDownloadState(); }
+        @Override public void changedUpdate(DocumentEvent e) { updateDownloadState(); }
     });
+
+    chkAudioOnly.addActionListener(e -> {
+        if (chkAudioOnly.isSelected()) {
+            rbMp3.setSelected(true);
+            rbMp4.setEnabled(false);
+        } else {
+            rbMp4.setEnabled(true);
+        }
+        updateDownloadState();
+    });
+
+    rbMp4.addActionListener(e -> {
+        if (rbMp4.isSelected()) {
+            chkAudioOnly.setSelected(false);
+            rbMp4.setEnabled(true);
+        }
+        updateDownloadState();
+    });
+
+    rbMp3.addActionListener(e -> updateDownloadState());
+
+    SwingUtilities.invokeLater(() -> {
+        JRootPane root = SwingUtilities.getRootPane(this);
+        if (root != null) root.setDefaultButton(btnDownload);
+    });
+
+    updateDownloadState();
+}
+
+private void updateDownloadState() {
+    String url = txtUrl.getText().trim();
+    boolean urlOk = isValidYoutubeUrl(url);
+
+    if (chkAudioOnly.isSelected()) {
+        rbMp3.setSelected(true);
+    }
+
+    btnDownload.setEnabled(urlOk);
+
+    if (url.isBlank()) {
+        lblStatus.setText("Ready");
+    } else if (!urlOk) {
+        lblStatus.setText("Invalid URL (YouTube only)");
+    } else {
+        lblStatus.setText("Ready to download");
+    }
+}
+
+private boolean isValidYoutubeUrl(String url) {
+    if (url == null) return false;
+    String u = url.trim();
+    if (u.isEmpty()) return false;
+    return YT_URL.matcher(u).matches();
+}
+
+private void setBusy(boolean busy) {
+    progressDownload.setVisible(busy);
+
+    txtUrl.setEnabled(!busy);
+    chkAudioOnly.setEnabled(!busy);
+    chkOpenPlayer.setEnabled(!busy);
+    rbMp3.setEnabled(!busy);
+    rbMp4.setEnabled(!busy && !chkAudioOnly.isSelected());
+
+    btnDownload.setEnabled(!busy && isValidYoutubeUrl(txtUrl.getText()));
+
+    setCursor(busy ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
+}
+
+private void startDownloadAsync() {
+    String url = txtUrl.getText().trim();
+
+    if (!isValidYoutubeUrl(url)) {
+        lblStatus.setText("Invalid URL (YouTube only)");
+        return;
+    }
+
+    String format = chkAudioOnly.isSelected()
+            ? "mp3"
+            : (rbMp4.isSelected() ? "mp4" : "mp3");
+
+    setBusy(true);
+    lblStatus.setText("Downloading…");
+
+    SwingWorker<Void, Void> worker = new SwingWorker<>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+            Thread.sleep(900);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+
+                txtLog.append("Simulant descàrrega de: " + url + "\n");
+                txtLog.append("Format seleccionat: " + format + "\n");
+
+                if (chkOpenPlayer.isSelected()) {
+                    txtLog.append("Open player: enabled (simulat)\n");
+                }
+
+                txtLog.append("\n");
+                lblStatus.setText("Done");
+
+            } catch (Exception ex) {
+                lblStatus.setText("Error during download (see logs)");
+                txtLog.append("ERROR: " + ex.getMessage() + "\n\n");
+            } finally {
+                setBusy(false);
+                updateDownloadState();
+            }
+        }
+    };
+
+    worker.execute();
 }
 
 
@@ -33,7 +177,6 @@ public MainPanel() {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        mediaPollingComponent1 = new gelabert.ytdlgui.mediapolling.component.MediaPollingComponent();
         jLabel1 = new javax.swing.JLabel();
         txtUrl = new javax.swing.JTextField();
         btnDownload = new javax.swing.JButton();
@@ -44,6 +187,8 @@ public MainPanel() {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtLog = new javax.swing.JTextArea();
         jLabelFormat = new javax.swing.JLabel();
+        progressDownload = new javax.swing.JProgressBar();
+        lblStatus = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 400));
 
@@ -76,6 +221,10 @@ public MainPanel() {
 
         jLabelFormat.setText("Format:");
 
+        progressDownload.setIndeterminate(true);
+
+        lblStatus.setText("Ready");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -84,14 +233,14 @@ public MainPanel() {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 219, Short.MAX_VALUE)
-                        .addComponent(btnDownload)
-                        .addGap(0, 202, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabelFormat)
                                 .addGap(18, 18, 18)
@@ -101,10 +250,16 @@ public MainPanel() {
                                 .addGap(18, 18, 18)
                                 .addComponent(chkAudioOnly))
                             .addComponent(chkOpenPlayer))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnDownload)
+                                .addGap(0, 202, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(progressDownload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblStatus))
+                                .addContainerGap(140, Short.MAX_VALUE))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,35 +270,32 @@ public MainPanel() {
                     .addComponent(txtUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDownload))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rbMp3)
-                    .addComponent(rbMp4)
-                    .addComponent(chkAudioOnly)
-                    .addComponent(jLabelFormat))
-                .addGap(18, 18, 18)
-                .addComponent(chkOpenPlayer)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rbMp3)
+                            .addComponent(rbMp4)
+                            .addComponent(chkAudioOnly)
+                            .addComponent(jLabelFormat))
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblStatus)
+                        .addGap(10, 10, 10)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(chkOpenPlayer)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(progressDownload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadActionPerformed
-         String url = txtUrl.getText().trim();
-    if (url.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Introdueix una URL.",
-            "Error",
-            javax.swing.JOptionPane.ERROR_MESSAGE
-        );
-        return;
-    }
+    startDownloadAsync();
 
-    String format = rbMp3.isSelected() ? "mp3" : "mp4";
-
-    txtLog.append("Simulant descàrrega de: " + url + "\n");
-    txtLog.append("Format seleccionat: " + format + "\n\n");
     }//GEN-LAST:event_btnDownloadActionPerformed
 
 
@@ -155,7 +307,8 @@ public MainPanel() {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelFormat;
     private javax.swing.JScrollPane jScrollPane1;
-    private gelabert.ytdlgui.mediapolling.component.MediaPollingComponent mediaPollingComponent1;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JProgressBar progressDownload;
     private javax.swing.JRadioButton rbMp3;
     private javax.swing.JRadioButton rbMp4;
     private javax.swing.JTextArea txtLog;
