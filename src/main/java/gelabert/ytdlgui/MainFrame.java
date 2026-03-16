@@ -11,6 +11,8 @@ package gelabert.ytdlgui;
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
+    private MediaLibraryPanel mediaLibraryPanel;
+
 
     /**
      * Creates new form MainFrame
@@ -20,9 +22,12 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
          MainPanel mainPanel = new MainPanel();
     PreferencesPanel prefsPanel = new PreferencesPanel(this);
-
+    mediaLibraryPanel = new MediaLibraryPanel(this);
+    
     contentPanel.add(mainPanel, "MAIN");
     contentPanel.add(prefsPanel, "PREFS");
+    contentPanel.add(mediaLibraryPanel, "LIBRARY");
+
     
     showCard("MAIN");
     
@@ -46,11 +51,15 @@ setVisible(true);      // per si no s'ha activat
         menuExit = new javax.swing.JMenuItem();
         Edit = new javax.swing.JMenu();
         menuPreferences = new javax.swing.JMenuItem();
+        View = new javax.swing.JMenu();
+        menuViewDownloader = new javax.swing.JMenuItem();
+        menuViewLibrary = new javax.swing.JMenuItem();
         Help = new javax.swing.JMenu();
         menuAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ytdlgui");
+        setPreferredSize(new java.awt.Dimension(800, 400));
         setResizable(false);
         setSize(new java.awt.Dimension(900, 600));
 
@@ -81,6 +90,26 @@ setVisible(true);      // per si no s'ha activat
         Edit.add(menuPreferences);
 
         jMenuBar1.add(Edit);
+
+        View.setText("View");
+
+        menuViewDownloader.setText("Downloader");
+        menuViewDownloader.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuViewDownloaderActionPerformed(evt);
+            }
+        });
+        View.add(menuViewDownloader);
+
+        menuViewLibrary.setText("Library");
+        menuViewLibrary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuViewLibraryActionPerformed(evt);
+            }
+        });
+        View.add(menuViewLibrary);
+
+        jMenuBar1.add(View);
 
         Help.setText("Help");
 
@@ -117,6 +146,17 @@ setVisible(true);      // per si no s'ha activat
     dialog.setVisible(true);
     }//GEN-LAST:event_menuAboutActionPerformed
 
+    private void menuViewDownloaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuViewDownloaderActionPerformed
+        // TODO add your handling code here:
+        showCard("MAIN");
+
+    }//GEN-LAST:event_menuViewDownloaderActionPerformed
+
+    private void menuViewLibraryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuViewLibraryActionPerformed
+        // TODO add your handling code here:
+        showCard("LIBRARY");
+    }//GEN-LAST:event_menuViewLibraryActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -151,11 +191,14 @@ setVisible(true);      // per si no s'ha activat
     private javax.swing.JMenu Edit;
     private javax.swing.JMenu File;
     private javax.swing.JMenu Help;
+    private javax.swing.JMenu View;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuPreferences;
+    private javax.swing.JMenuItem menuViewDownloader;
+    private javax.swing.JMenuItem menuViewLibrary;
     // End of variables declaration//GEN-END:variables
 }
 

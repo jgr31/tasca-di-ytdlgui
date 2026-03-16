@@ -38,7 +38,7 @@ public class MainPanel extends javax.swing.JPanel {
         txtLog = new javax.swing.JTextArea();
         jLabelFormat = new javax.swing.JLabel();
 
-        setPreferredSize(new java.awt.Dimension(600, 300));
+        setPreferredSize(new java.awt.Dimension(800, 400));
 
         jLabel1.setText("URL:");
 

@@ -49,8 +49,9 @@ public class PreferencesPanel extends javax.swing.JPanel {
         txtDownloadFolder = new javax.swing.JTextField();
         txtSpeedField = new javax.swing.JTextField();
         btnSave = new javax.swing.JButton();
+        jLabelTittlePreferences = new javax.swing.JLabel();
 
-        setPreferredSize(new java.awt.Dimension(600, 300));
+        setPreferredSize(new java.awt.Dimension(800, 400));
 
         txtTempFolder.setText("Temporal Folder:");
 
@@ -104,6 +105,9 @@ public class PreferencesPanel extends javax.swing.JPanel {
             }
         });
 
+        jLabelTittlePreferences.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabelTittlePreferences.setText("Preferences");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -144,12 +148,17 @@ public class PreferencesPanel extends javax.swing.JPanel {
                             .addComponent(btnBrowseTemp)
                             .addComponent(btnBrowseFfmpeg)
                             .addComponent(btnBrowseYtdlp))
-                        .addGap(48, 48, 48))))
+                        .addGap(48, 48, 48))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelTittlePreferences)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap()
+                .addComponent(jLabelTittlePreferences)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTempFolder)
                     .addComponent(btnBrowseTemp)
@@ -171,7 +180,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
                     .addComponent(txtSpeedField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(chkM3u)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBack)
                     .addComponent(btnSave))
@@ -239,6 +248,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnSave;
     private javax.swing.JCheckBox chkLimitSpeed;
     private javax.swing.JCheckBox chkM3u;
+    private javax.swing.JLabel jLabelTittlePreferences;
     private javax.swing.JTextField jTextFieldtempfolder;
     private javax.swing.JLabel lblFfmpeg;
     private javax.swing.JTextField txtDownloadFolder;
