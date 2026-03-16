@@ -74,6 +74,8 @@ public class MediaLibraryPanel extends javax.swing.JPanel {
         }
     }
 
+    
+    
     // 🔹 Actualitzar la JList
     lstMedia.setListData(
     allFiles.stream()
@@ -254,6 +256,7 @@ public class MediaLibraryPanel extends javax.swing.JPanel {
     }
     }//GEN-LAST:event_btnBackActionPerformed
 
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;

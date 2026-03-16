@@ -6,7 +6,7 @@ import java.awt.*;
 public class LoginPanel extends JPanel {
 
     private MainFrame mainFrame;
-    private ApiClient apiClient;
+    private MediaPollingComponent mediaPolling; 
 
     private JTextField txtEmail;
     private JPasswordField txtPassword;
@@ -14,11 +14,11 @@ public class LoginPanel extends JPanel {
     private JLabel lblStatus;
     private JCheckBox chkRemember;
 
-    public LoginPanel(MainFrame mainFrame, ApiClient apiClient) {
-        this.mainFrame = mainFrame;
-        this.apiClient = apiClient;
-        initUI();
-    }
+public LoginPanel(MainFrame mainFrame, MediaPollingComponent mediaPolling) {
+    this.mainFrame = mainFrame;
+    this.mediaPolling = mediaPolling;
+    initUI();
+}
 
     private void initUI() {
 
@@ -81,7 +81,8 @@ public class LoginPanel extends JPanel {
         }
 
         try {
-            String token = apiClient.login(email, password);
+            String token = mediaPolling.login(email, password);
+
 
             lblStatus.setText("Login OK");
             lblStatus.setForeground(Color.GREEN);

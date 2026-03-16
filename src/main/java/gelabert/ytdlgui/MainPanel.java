@@ -13,9 +13,15 @@ public class MainPanel extends javax.swing.JPanel {
     /**
      * Creates new form MainPanel
      */
-    public MainPanel() {
-        initComponents();
-    }
+public MainPanel() {
+    initComponents();
+
+
+    mediaPollingComponent1.addMediaPollingListener(evt -> {
+        txtLog.append(evt.toString() + "\n");
+    });
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,6 +33,7 @@ public class MainPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        mediaPollingComponent1 = new gelabert.ytdlgui.mediapolling.component.MediaPollingComponent();
         jLabel1 = new javax.swing.JLabel();
         txtUrl = new javax.swing.JTextField();
         btnDownload = new javax.swing.JButton();
@@ -59,6 +66,8 @@ public class MainPanel extends javax.swing.JPanel {
         buttonGroup1.add(rbMp3);
         rbMp3.setText("MP3");
 
+        jScrollPane1.setViewportView(null);
+
         txtLog.setEditable(false);
         txtLog.setColumns(20);
         txtLog.setLineWrap(true);
@@ -78,9 +87,9 @@ public class MainPanel extends javax.swing.JPanel {
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(txtUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 19, Short.MAX_VALUE)
+                        .addGap(18, 219, Short.MAX_VALUE)
                         .addComponent(btnDownload)
-                        .addGap(0, 2, Short.MAX_VALUE))
+                        .addGap(0, 202, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -146,6 +155,7 @@ public class MainPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelFormat;
     private javax.swing.JScrollPane jScrollPane1;
+    private gelabert.ytdlgui.mediapolling.component.MediaPollingComponent mediaPollingComponent1;
     private javax.swing.JRadioButton rbMp3;
     private javax.swing.JRadioButton rbMp4;
     private javax.swing.JTextArea txtLog;

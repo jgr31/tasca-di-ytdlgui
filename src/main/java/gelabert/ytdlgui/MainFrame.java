@@ -14,13 +14,14 @@ public class MainFrame extends javax.swing.JFrame {
     
     private String authToken; 
     // 🔹 Backend client
-    private ApiClient apiClient;
     
     // 🔹 Panells de l'aplicació
     private LoginPanel loginPanel;
     private MainPanel mainPanel;
     private PreferencesPanel prefsPanel;
     private MediaLibraryPanel mediaLibraryPanel;
+    private MediaPollingComponent pollingComponent;
+
 
 
     /**
@@ -29,39 +30,48 @@ public class MainFrame extends javax.swing.JFrame {
 public MainFrame() {
     initComponents();
 
-    setLoggedIn(false);   
-    // 🔹 Crear client de la API (posa aquí la URL que toqui)
-    apiClient = new ApiClient("https://dimedianetapi9.azurewebsites.net");
+    // 🔹 Menús desactivats al principi
+    setLoggedIn(false);
 
-    // 🔹 Crear panells (ara com a atributs, no variables locals)
-    loginPanel = new LoginPanel(this, apiClient);
-    mainPanel = new MainPanel();              // si després vols passar apiClient, ja ho ajustarem
+    // ❗ ELIMINAT — NO ES POT FER SERVIR ApiClient DIRECTAMENT
+    // apiClient = new ApiClient("https://dimedianetapi9.azurewebsites.net");
+
+    // 🔹 Crear component de polling (substitut oficial de ApiClient)
+    pollingComponent = new MediaPollingComponent();
+    pollingComponent.setApiUrl("https://dimedianetapi9.azurewebsites.net");
+    pollingComponent.setPollingIntervalSeconds(10);
+    pollingComponent.setRunning(false); // aturat fins login
+
+    // Listener quan hi ha media nou (opcional)
+    pollingComponent.addMediaPollingListener(evt -> {
+        System.out.println(">>> " + evt.getNewMedia().size() +
+            " fitxers nous a les " + evt.getDiscoveredAt());
+    });
+
+    // 🔹 Crear panells usant el COMPONENT (no ApiClient)
+    loginPanel = new LoginPanel(this, pollingComponent);
+    mainPanel = new MainPanel();              // si el necessites, li passam el component més tard
     prefsPanel = new PreferencesPanel(this);
     mediaLibraryPanel = new MediaLibraryPanel(this);
 
-    // 🔹 Afegir-los al CardLayout
+    // 🔹 Afegir panells al CardLayout
     contentPanel.add(loginPanel, "LOGIN");
     contentPanel.add(mainPanel, "MAIN");
     contentPanel.add(prefsPanel, "PREFS");
     contentPanel.add(mediaLibraryPanel, "LIBRARY");
-    
-        // 🔹 Intentar carregar usuari recordat (Remember me)
+
+    // 🔹 Remember Me
     String[] remembered = RememberHelper.load();
     if (remembered != null) {
-        String rememberedEmail = remembered[0];
-        // String rememberedToken = remembered[1]; // de moment no l'emprem
-
-        loginPanel.setEmail(rememberedEmail);
+        loginPanel.setEmail(remembered[0]);
         loginPanel.setRememberMe(true);
     }
 
-
-    // 🔹 Primera pantalla: LOGIN
+    // 🔹 Primera pantalla
     showCard("LOGIN");
 
-    pack();                    // calcula mida segons components
+    pack();
     setLocationRelativeTo(null);
-    // NO fa falta setVisible(true) aquí perquè al main ja fas new MainFrame().setVisible(true);
 }
 
 
@@ -198,16 +208,17 @@ public MainFrame() {
     private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
         // TODO add your handling code here:
             // Esborrem el token en memòria
-    this.authToken = null;
+   this.authToken = null;
 
-    // Esborrem l’usuari recordat (adapta el nom si el teu helper es diu diferent)
+    // aturam el component de polling i li llevam el token
+    pollingComponent.setRunning(false);
+    pollingComponent.setToken(null);
+
+    // esborram usuari recordat
     RememberHelper.clear();
 
-
-    // Desactivem menús protegits
+    // desactivam menús i tornam al login
     setLoggedIn(false);
-
-    // Tornem a la pantalla de login
     showCard("LOGIN");
     }//GEN-LAST:event_menuLogoutActionPerformed
 
@@ -251,11 +262,20 @@ public MainFrame() {
     }
 
     // 🔹 Quan el login tingui èxit, guardarem el token aquí
-    public void onLoginSuccess(String token) {
-        this.authToken = token;
-        setLoggedIn(true);      // activem menús protegits
-        showCard("MAIN");       // anem al Downloader
-    }
+public void onLoginSuccess(String token) {
+    // guardar el token a MainFrame
+    this.authToken = token;
+
+    // 🔹 donar el token al component i arrencar el polling
+    pollingComponent.setToken(token);
+    pollingComponent.setRunning(true);
+
+    // activar menús i anar al panell principal
+    setLoggedIn(true);
+    showCard("MAIN");
+}
+
+
 
     public String getAuthToken() {
         return authToken;
