@@ -11,30 +11,59 @@ package gelabert.ytdlgui;
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
+    
+    private String authToken; 
+    // 🔹 Backend client
+    private ApiClient apiClient;
+    
+    // 🔹 Panells de l'aplicació
+    private LoginPanel loginPanel;
+    private MainPanel mainPanel;
+    private PreferencesPanel prefsPanel;
     private MediaLibraryPanel mediaLibraryPanel;
 
 
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
-        initComponents();
-        setLocationRelativeTo(null);
-         MainPanel mainPanel = new MainPanel();
-    PreferencesPanel prefsPanel = new PreferencesPanel(this);
+public MainFrame() {
+    initComponents();
+
+    setLoggedIn(false);   
+    // 🔹 Crear client de la API (posa aquí la URL que toqui)
+    apiClient = new ApiClient("https://dimedianetapi9.azurewebsites.net");
+
+    // 🔹 Crear panells (ara com a atributs, no variables locals)
+    loginPanel = new LoginPanel(this, apiClient);
+    mainPanel = new MainPanel();              // si després vols passar apiClient, ja ho ajustarem
+    prefsPanel = new PreferencesPanel(this);
     mediaLibraryPanel = new MediaLibraryPanel(this);
-    
+
+    // 🔹 Afegir-los al CardLayout
+    contentPanel.add(loginPanel, "LOGIN");
     contentPanel.add(mainPanel, "MAIN");
     contentPanel.add(prefsPanel, "PREFS");
     contentPanel.add(mediaLibraryPanel, "LIBRARY");
+    
+        // 🔹 Intentar carregar usuari recordat (Remember me)
+    String[] remembered = RememberHelper.load();
+    if (remembered != null) {
+        String rememberedEmail = remembered[0];
+        // String rememberedToken = remembered[1]; // de moment no l'emprem
 
-    
-    showCard("MAIN");
-    
-    pack();                // calcula mida segons components
-setLocationRelativeTo(null);     // assegura mida mínima
-setVisible(true);      // per si no s'ha activat
+        loginPanel.setEmail(rememberedEmail);
+        loginPanel.setRememberMe(true);
     }
+
+
+    // 🔹 Primera pantalla: LOGIN
+    showCard("LOGIN");
+
+    pack();                    // calcula mida segons components
+    setLocationRelativeTo(null);
+    // NO fa falta setVisible(true) aquí perquè al main ja fas new MainFrame().setVisible(true);
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -49,6 +78,7 @@ setVisible(true);      // per si no s'ha activat
         jMenuBar1 = new javax.swing.JMenuBar();
         File = new javax.swing.JMenu();
         menuExit = new javax.swing.JMenuItem();
+        menuLogout = new javax.swing.JMenuItem();
         Edit = new javax.swing.JMenu();
         menuPreferences = new javax.swing.JMenuItem();
         View = new javax.swing.JMenu();
@@ -76,6 +106,14 @@ setVisible(true);      // per si no s'ha activat
             }
         });
         File.add(menuExit);
+
+        menuLogout.setText("Logout");
+        menuLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLogoutActionPerformed(evt);
+            }
+        });
+        File.add(menuLogout);
 
         jMenuBar1.add(File);
 
@@ -157,6 +195,22 @@ setVisible(true);      // per si no s'ha activat
         showCard("LIBRARY");
     }//GEN-LAST:event_menuViewLibraryActionPerformed
 
+    private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
+        // TODO add your handling code here:
+            // Esborrem el token en memòria
+    this.authToken = null;
+
+    // Esborrem l’usuari recordat (adapta el nom si el teu helper es diu diferent)
+    RememberHelper.clear();
+
+
+    // Desactivem menús protegits
+    setLoggedIn(false);
+
+    // Tornem a la pantalla de login
+    showCard("LOGIN");
+    }//GEN-LAST:event_menuLogoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -186,7 +240,28 @@ setVisible(true);      // per si no s'ha activat
         java.awt.CardLayout cl = (java.awt.CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, name);
     }
+        
 
+    // 🔹 Cridarem això per activar/desactivar menús
+    public void setLoggedIn(boolean loggedIn) {
+        menuViewDownloader.setEnabled( loggedIn );
+        menuViewLibrary.setEnabled( loggedIn );
+        menuPreferences.setEnabled( loggedIn );
+        menuLogout.setEnabled(loggedIn);
+    }
+
+    // 🔹 Quan el login tingui èxit, guardarem el token aquí
+    public void onLoginSuccess(String token) {
+        this.authToken = token;
+        setLoggedIn(true);      // activem menús protegits
+        showCard("MAIN");       // anem al Downloader
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu Edit;
     private javax.swing.JMenu File;
@@ -196,6 +271,7 @@ setVisible(true);      // per si no s'ha activat
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem menuAbout;
     private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenuItem menuLogout;
     private javax.swing.JMenuItem menuPreferences;
     private javax.swing.JMenuItem menuViewDownloader;
     private javax.swing.JMenuItem menuViewLibrary;
