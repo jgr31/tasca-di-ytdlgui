@@ -1,119 +1,114 @@
 # Projecte DI -- Disseny d'Interfícies
 
-Aplicació: ytdlgui (Java Swing)\
-Alumne: Jordi Gelabert\
-Cicle Formatiu: DAM -- 2n curs\
-Curs: 2025-2026
+Aplicació: **ytdlgui (Java Swing)** Alumne: **Jordi Gelabert** Cicle
+Formatiu: **DAM -- 2n curs** Curs: **2025-2026**
+
+Aquest repositori conté el desenvolupament del projecte **ytdlgui**, una
+aplicació d'escriptori desenvolupada amb **Java Swing** i **Maven** dins
+l'assignatura de **Disseny d'Interfícies (DI)**.
+
+El projecte s'ha desenvolupat de manera incremental seguint les
+diferents entregues de la pràctica.
 
 ------------------------------------------------------------------------
 
 # 📁 Estructura del repositori
 
-## ytdlgui - tasca 1
+    src/
+    lib/
+    docs/
+    pom.xml
+    nb-configuration.xml
+    README.md
 
-Creació del projecte Swing i estructura inicial.
+### `src`
 
-## ytdlgui - tasca 1.2
+Conté el codi font de l'aplicació Java Swing.
 
-Millora d'interfícies, ús de CardLayout i navegació entre pantalles.
+### `lib`
 
-## ytdlgui - tasca 3.1.1
+Llibreries externes utilitzades pel projecte.
 
-Creació del component personalitzat MediaPollingComponent (JavaBean).
+### `docs`
 
-## ytdlgui - tasca 3.1.2
+Documentació de la pràctica.
 
-Integració del component dins la UI i configuració del flux
-login/logout.
+Actualment inclou:
 
-## ytdlgui - tasca 3.1.3
+    docs/
+     └ DI03_1_JordiGelabert.pdf
 
-Implementació completa del polling: - Timer funcional - Detecció de nous
-fitxers - MediaPollingListener - Execució immediata després del login
+### `pom.xml`
 
-## ytdlgui - tasca DI04
+Fitxer de configuració Maven amb les dependències i configuració del
+projecte.
 
-Millores d'usabilitat, robustesa i experiència d'usuari.
+### `nb-configuration.xml`
 
-------------------------------------------------------------------------
-
-# 🚀 DI04 -- Millores implementades
-
-## 🎨 1. Aspecte visual i experiència d'usuari
-
--   Reorganització del MainPanel per millorar distribució.
--   Afegit JProgressBar per indicar estat de descàrrega.
--   Afegit JLabel d'estat (Ready / Downloading / Done / Error).
--   Tooltips en camps i botons.
--   Comportament coherent MP3 / MP4 / Audio Only.
+Configuració específica del projecte per a NetBeans.
 
 ------------------------------------------------------------------------
 
-## 🧠 2. Affordance i restriccions
+# ⚙️ Tecnologies utilitzades
 
--   Botó Download desactivat fins que la URL és vàlida.
--   Validació amb expressió regular per URLs de YouTube.
--   Si s'activa "Audio only", es força MP3.
--   Missatges d'error clars.
--   Botó Login activat només amb email vàlid.
-
-------------------------------------------------------------------------
-
-## ⚙️ 3. Millores tècniques d'usabilitat
-
--   Ús de SwingWorker per evitar bloqueig de la UI.
--   ProgressBar indeterminada durant operacions.
--   Canvi de cursor a WAIT durant processos.
--   Tecla Enter com a botó per defecte.
--   Controls desactivats mentre hi ha operació en curs.
-
-------------------------------------------------------------------------
-
-## 🛡 4. Gestió global d'errors (CrashLogger)
-
--   Thread.setDefaultUncaughtExceptionHandler implementat.
--   Registre automàtic en fitxer de log.
--   Missatge amigable a l'usuari.
--   No exposa stacktrace a la interfície.
-
-------------------------------------------------------------------------
-
-## 🧱 Arquitectura i bones pràctiques
-
--   Separació de responsabilitats:
-    -   LoginPanel
-    -   MainPanel
-    -   MediaPollingComponent
-    -   ApiClient
-    -   CrashLogger
-    -   RememberHelper
--   Arquitectura modular amb Maven.
--   Component JavaBean reutilitzable.
--   Codi organitzat i estructurat.
-
-------------------------------------------------------------------------
-
-# ▶ Execució
-
-## Requisits
-
--   Java 24
+-   Java
+-   Java Swing
 -   Maven
--   NetBeans 28
-
-## Execució
-
-mvn clean install\
-mvn exec:java
-
-O executar la classe gelabert.ytdlgui.Ytdlgui des de l'IDE.
+-   NetBeans IDE
 
 ------------------------------------------------------------------------
 
-# ✔ Estat final
+# ▶️ Com executar el projecte
 
-✔ DI04 complet\
-✔ UI millorada\
-✔ Operacions asíncrones\
-✔ Gestió d'errors global\
-✔ Projecte funcional i compilable
+1.  Obrir el projecte amb **NetBeans** o qualsevol IDE compatible amb
+    Maven.
+2.  Assegurar-se que s'utilitza **Java 17 o superior**.
+3.  Executar un **Clean and Build** del projecte.
+4.  Executar la classe principal:
+
+```{=html}
+<!-- -->
+```
+    gelabert.ytdlgui.Ytdlgui
+
+L'aplicació iniciarà amb la pantalla de **login** i carregarà
+posteriorment la interfície principal.
+
+------------------------------------------------------------------------
+
+# 📦 Component MediaPolling
+
+El projecte utilitza un component personalitzat anomenat
+**MediaPollingComponent**, implementat com una llibreria Maven
+independent.
+
+Aquest component permet:
+
+-   fer polling periòdic a una API
+-   generar notificacions
+-   enviar events a la interfície principal
+
+La llibreria es troba en un repositori separat:
+
+    mediapolling-component
+
+------------------------------------------------------------------------
+
+# ✔️ Estat del projecte
+
+El projecte inclou totes les entregues desenvolupades durant la
+pràctica:
+
+-   DI01 -- Creació del projecte i primeres pantalles
+-   DI03 -- Desenvolupament i integració del component MediaPolling
+-   DI04 -- Documentació del projecte
+
+Cada entrega està registrada mitjançant commits dins el repositori.
+
+------------------------------------------------------------------------
+
+# 📄 Documentació
+
+La documentació associada al projecte es troba a la carpeta:
+
+    docs/
